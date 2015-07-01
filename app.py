@@ -10,8 +10,8 @@ from os.path import isfile, join, isdir
 
 # __file__ refers to the file settings.py 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
-HOST_DIR = '/Users/byj/website/'
-BASE_DIR = '/Users/byj/Dropbox/'
+HOST_DIR = os.getenv('HOME') + '/website/'
+BASE_DIR = os.getenv('HOME') + '/Dropbox/'
 CSS_DIR = BASE_DIR + 'Sites/bootstrap' 
 IMG_DIR = BASE_DIR + 'Sites/images' 
 MARKDOWN = BASE_DIR + 'Markdown.pl'
