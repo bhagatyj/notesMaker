@@ -10,8 +10,8 @@ from os.path import isfile, join, isdir
 
 # __file__ refers to the file settings.py 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
-HOST_DIR = '/Users/byj/website/'
-BASE_DIR = '/Users/byj/Dropbox/'
+HOST_DIR = os.getenv('HOME') + '/website/'
+BASE_DIR = os.getenv('HOME') + '/Dropbox/'
 CSS_DIR = BASE_DIR + 'Sites/bootstrap' 
 IMG_DIR = BASE_DIR + 'Sites/images' 
 MARKDOWN = BASE_DIR + 'Markdown.pl'
@@ -184,14 +184,21 @@ def findMdFiles( dirname ):
 @app.route('/getMdFile/<dirname>')
 def getMdFile(dirname):
     resp = app.send_static_file("/Users/byj/Dropbox/dailyLog.yj.html")
+    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
+    resp.headers['Access-Control-Allow-Credentials'] = 'true'
+    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
     return resp
 
 @app.route('/path/<path:path>')
 def static_proxy(path):
     if path.endswith(".html"):
-        return flask.send_from_directory(HOST_DIR + 'pages/', path)
+        resp = flask.send_from_directory(HOST_DIR + 'pages/', path)
     else:
-        return flask.send_from_directory(HOST_DIR, path)
+        resp = flask.send_from_directory(HOST_DIR, path)
+    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
+    resp.headers['Access-Control-Allow-Credentials'] = 'true'
+    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
+    return resp
 
 def cleanup():
     pass
