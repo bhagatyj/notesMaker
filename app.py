@@ -56,15 +56,17 @@ HOME_PAGE_HEADER = """
 .menuitem:hover {
     background-color:        #8bb3d4;
 }
-
+.highlight {color:red;}
 </style>
 </head>
 <body>
 <script src="/path/bootstrap/jquery/jquery.js"></script>
 <script>
-    function changeContent(file) { 
-        console.log(file);
-        $.get("http://127.0.0.1:5000/path/".concat(file).concat("?rnd=seconds_since_epoch"), function(response) {
+    function changeContent(object) { 
+        console.log(object.id);
+        $('.highlight').removeClass('highlight');
+        $(object).addClass('highlight');
+        $.get("http://127.0.0.1:5000/path/".concat(object.id).concat("?rnd=seconds_since_epoch"), function(response) {
             $('#content').html(response);
         });
     } 
@@ -166,7 +168,7 @@ def createHomePage():
        for f in files:
            name = f.replace('___', ' ' )
            line = '<li  class="menuitem" id="' + f +  '.yj.md.html"' + \
-                     'onClick="changeContent(this.id)" >' + name + '</li>\n'
+                     'onClick="changeContent(this)" >' + name + '</li>\n'
            homePage.write(line)
        homePage.write(HOME_PAGE_TRAILER)
 
