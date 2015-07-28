@@ -18,7 +18,7 @@ MARKDOWN = BASE_DIR + 'Markdown.pl'
 
 HOME_PAGE_HEADER = """
 <!doctype html>
- <title> BYJ </title >
+ <title> BYJ Home Page </title >
 <head> 
 <link rel="stylesheet" type="text/css" href="/path/bootstrap/css/bootstrap.css"> 
 <style>
