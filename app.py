@@ -69,13 +69,15 @@ HOME_PAGE_HEADER = """
 }
  
 /* Collapsed state for list element */
+
+/*    background-image: url(../img/collapsed.png); */
 #expList .collapsed {
-    background-image: url(../img/collapsed.png);
+    background-image: url(/path/images/collapsed.png);
 }
 /* Expanded state for list element
 /* NOTE: This class must be located UNDER the collapsed one */
 #expList .expanded {
-    background-image: url(../img/expanded.png);
+    background-image: url(/path/images/expanded.png);
 }
 
 
@@ -105,7 +107,8 @@ HOME_PAGE_HEADER = """
 <script>
 
     function changeContent(object) { 
-        console.log(object.id);
+        console.log(object);
+        //console.log(object.id);
         $('.highlight').removeClass('highlight');
         $(object).addClass('highlight');
         $.get("http://127.0.0.1:5000/path/".concat(object.id).concat("?rnd=seconds_since_epoch"), function(response) {
@@ -114,15 +117,17 @@ HOME_PAGE_HEADER = """
     } 
     function init() { 
         console.log("init");
+/*
         $.get("http://127.0.0.1:5000/init", function(response) {
             $('#content').html(response);
         });
+*/
         $.ajaxSetup({
             cache: false // Disable caching of AJAX responses
         });
     } 
 
-$(function prepareList() {
+function prepareList() {
     $('#expList').find('li:has(ul)').unbind('click').click(function(event) {
         if(this == event.target) {
             $(this).toggleClass('expanded');
@@ -145,7 +150,7 @@ $(function prepareList() {
         $('.collapsed').removeClass('expanded');
         $('.collapsed').children().hide('medium');
     })
-});
+};
 
 
 
@@ -156,7 +161,7 @@ $(document).ready(function() {
 </script>
 
 <div id=leftBar>
-<ul id="navbar" >
+<ul id="explist" >
 <li  onClick="init()" >init</li>
 """
 HOME_PAGE_TRAILER = """
