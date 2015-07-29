@@ -42,7 +42,46 @@ HOME_PAGE_HEADER = """
   display: block;
   list-style-type: none;
 }
+
+#listContainer{
+  margin-top:15px;
+}
  
+#expList ul, li {
+    list-style: none;
+    margin:0;
+    padding:0;
+    cursor: pointer;
+}
+#expList p {
+    margin:0;
+    display:block;
+}
+#expList p:hover {
+    background-color:#121212;
+}
+#expList li {
+    line-height:140%;
+    text-indent:0px;
+    background-position: 1px 8px;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+}
+ 
+/* Collapsed state for list element */
+#expList .collapsed {
+    background-image: url(../img/collapsed.png);
+}
+/* Expanded state for list element
+/* NOTE: This class must be located UNDER the collapsed one */
+#expList .expanded {
+    background-image: url(../img/expanded.png);
+}
+
+
+
+
+
 .menuitem {
     list-style-type:   none;
     display:           inline-block;
@@ -82,14 +121,43 @@ HOME_PAGE_HEADER = """
             cache: false // Disable caching of AJAX responses
         });
     } 
+
+$(function prepareList() {
+    $('#expList').find('li:has(ul)').unbind('click').click(function(event) {
+        if(this == event.target) {
+            $(this).toggleClass('expanded');
+            $(this).children('ul').toggle('medium');
+        }
+        return false;
+    }).addClass('collapsed').removeClass('expanded').children('ul').hide();
+ 
+    //Hack to add links inside the cv
+    $('#expList a').unbind('click').click(function() {
+        window.open($(this).attr('href'));
+        return false;
+    });
+    //Create the button functionality
+    $('#expandList').unbind('click').click(function() {
+        $('.collapsed').addClass('expanded');
+        $('.collapsed').children().show('medium');
+    })
+    $('#collapseList').unbind('click').click(function() {
+        $('.collapsed').removeClass('expanded');
+        $('.collapsed').children().hide('medium');
+    })
+});
+
+
+
 $(document).ready(function() {
-    //changeContent("arista_commands.yj.md.html");
+    changeContent("arista_commands.yj.md.html");
+    prepareList();
 }); 
 </script>
 
 <div id=leftBar>
 <ul id="navbar" >
-<li  class="menuitem" onClick="init()" >init</li>
+<li  onClick="init()" >init</li>
 """
 HOME_PAGE_TRAILER = """
 </ul>
@@ -164,7 +232,72 @@ def findMdFilesInternal( dirname ):
     mySet["mdFiles"] = httpLinks
     return mySet
 
+def formRecursiveDict( names, separator='___' ):
+    dictRoot = dict()
+    for name in names:
+        newDict = dictRoot
+        nodes = name.split( separator )
+        for node in nodes[ : -1 ]:
+            if node not in newDict:
+                newDict[node] = dict()
+            newDict = newDict[node]
+        if '.files' not in newDict:
+            newDict['.files'] = list()
+        newDict['.files'].append(name)
+    return dictRoot
+
+def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
+             itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)' >%s</li>",
+             valuetag="  %s", blocktag=('<ul>', '</ul>')):
+    print inpData
+    if isinstance(inpData, dict):
+        if '.files' not in inpData:
+            htmlText.append(blocktag[0])
+        for k, v in inpData.iteritems():
+            name = nametag % k
+            if isinstance(v, dict) or isinstance(v, list):
+                if (k != '.files'):
+                    htmlText.append(itemtag % ( name, name) )
+                pretty_items(htmlText, v)
+            else:
+                value = valuetag % v
+                htmlText.append(itemtag % (name + value, name + value ))
+        if '.files' not in inpData:
+            htmlText.append(blocktag[1])
+    elif isinstance(inpData, list):
+        htmlText.append(blocktag[0])
+        for i in inpData:
+            if isinstance(i, dict) or isinstance(i, list):
+                htmlText.append(itemtag % (" - ", " - " ) )
+                pretty_items(htmlText, i)
+            else:
+                link = i.split('___')[-1]
+                htmlText.append(itemtag % ( i, link ) )
+        htmlText.append(blocktag[1])
+    return htmlText
+
+def formHtmlText( inpData ):
+    r = list()
+    pretty_items( r, inpData )
+    return '\n'.join(r)
+
+def createHtmlDivOfFiles( files ):
+    rDict = formRecursiveDict( files )
+    htmlDiv = formHtmlText( rDict )
+    return htmlDiv
+
 def createHomePage():
+   files = findMdFilesInternal( '' )[ 'mdFiles' ]
+   files.sort()
+   print files
+   htmlFile = HOST_DIR + 'pages/' + '/index.html'
+   with open( htmlFile, 'w' ) as homePage:
+       homePage.write(HOME_PAGE_HEADER)
+       lines = createHtmlDivOfFiles(files)
+       homePage.write(lines)
+       homePage.write(HOME_PAGE_TRAILER)
+
+def createHomePage2():
    files = findMdFilesInternal( '' )[ 'mdFiles' ]
    files.sort()
    print files
