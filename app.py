@@ -117,11 +117,9 @@ HOME_PAGE_HEADER = """
     } 
     function init() { 
         console.log("init");
-/*
         $.get("http://127.0.0.1:5000/init", function(response) {
             $('#content').html(response);
         });
-*/
         $.ajaxSetup({
             cache: false // Disable caching of AJAX responses
         });
