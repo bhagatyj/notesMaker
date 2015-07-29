@@ -21,6 +21,8 @@ HOME_PAGE_HEADER = """
  <title> BYJ Home Page </title >
 <head> 
 <link rel="stylesheet" type="text/css" href="/path/bootstrap/css/bootstrap.css"> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
 <style>
 .box {
     margin: 0px;
@@ -62,6 +64,7 @@ HOME_PAGE_HEADER = """
 <body>
 <script src="/path/bootstrap/jquery/jquery.js"></script>
 <script>
+
     function changeContent(object) { 
         console.log(object.id);
         $('.highlight').removeClass('highlight');
@@ -74,6 +77,9 @@ HOME_PAGE_HEADER = """
         console.log("init");
         $.get("http://127.0.0.1:5000/init", function(response) {
             $('#content').html(response);
+        });
+        $.ajaxSetup({
+            cache: false // Disable caching of AJAX responses
         });
     } 
 $(document).ready(function() {
