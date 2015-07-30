@@ -28,12 +28,12 @@ HOME_PAGE_HEADER = """
     margin: 0px;
 }
 #leftBar {
-    width: 18%;
+    width: 24%;
     display: inline-block;
     vertical-align: top;
 }
 #content {
-    width: 80%;
+    width: 75%;
     display: inline-block;
     vertical-align: top;
 }
