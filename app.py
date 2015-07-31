@@ -16,152 +16,8 @@ CSS_DIR = BASE_DIR + 'Sites/bootstrap'
 IMG_DIR = BASE_DIR + 'Sites/images' 
 MARKDOWN = BASE_DIR + 'Markdown.pl'
 
-HOME_PAGE_HEADER = """
-<!doctype html>
- <title> BYJ Home Page </title >
-<head> 
-<link rel="stylesheet" type="text/css" href="/path/bootstrap/css/bootstrap.css"> 
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="-1">
-<style>
-.box {
-    margin: 0px;
-}
-#leftBar {
-    width: 24%;
-    display: inline-block;
-    vertical-align: top;
-}
-#content {
-    width: 75%;
-    display: inline-block;
-    vertical-align: top;
-}
+HOME_PAGE_HEADER = ""
 
-#navbar {
-  display: block;
-  list-style-type: none;
-}
-
-#listContainer{
-  margin-top:15px;
-}
- 
-#expList ul, li {
-    list-style: none;
-    margin:0;
-    padding:0;
-    cursor: pointer;
-}
-#expList p {
-    margin:0;
-    display:block;
-}
-#expList p:hover {
-    background-color:#121212;
-}
-#expList li {
-    line-height:140%;
-    text-indent:0px;
-    background-position: 1px 8px;
-    padding-left: 20px;
-    background-repeat: no-repeat;
-}
- 
-/* Collapsed state for list element */
-
-/*    background-image: url(../img/collapsed.png); */
-#expList .collapsed {
-    background-image: url(/path/images/collapsed.png);
-}
-/* Expanded state for list element
-/* NOTE: This class must be located UNDER the collapsed one */
-#expList .expanded {
-    background-image: url(/path/images/expanded.png);
-}
-
-
-
-
-
-.menuitem {
-    list-style-type:   none;
-    display:           inline-block;
-    width:             150px;
-    margin-left:       5px;
-    margin-right:      5px;
-    font-family:       Georgia;
-    font-size:         11px;
-    background-color:  #c0dbf1;
-    border:            1px solid black;
-    padding:           0;    
-}
-.menuitem:hover {
-    background-color:        #8bb3d4;
-}
-.highlight {color:red;}
-</style>
-</head>
-<body>
-<script src="/path/bootstrap/jquery/jquery.js"></script>
-<script>
-
-    function changeContent(object) { 
-        console.log(object);
-        //console.log(object.id);
-        $('.highlight').removeClass('highlight');
-        $(object).addClass('highlight');
-        $.get("http://127.0.0.1:5000/path/".concat(object.id).concat("?rnd=seconds_since_epoch"), function(response) {
-            $('#content').html(response);
-        });
-    } 
-    function init() { 
-        console.log("init");
-        $.get("http://127.0.0.1:5000/init", function(response) {
-            $('#content').html(response);
-        });
-        $.ajaxSetup({
-            cache: false // Disable caching of AJAX responses
-        });
-    } 
-
-function prepareList() {
-    $('#expList').find('li:has(ul)').unbind('click').click(function(event) {
-        if(this == event.target) {
-            $(this).toggleClass('expanded');
-            $(this).children('ul').toggle('medium');
-        }
-        return false;
-    }).addClass('collapsed').removeClass('expanded').children('ul').hide();
- 
-    //Hack to add links inside the cv
-    $('#expList a').unbind('click').click(function() {
-        window.open($(this).attr('href'));
-        return false;
-    });
-    //Create the button functionality
-    $('#expandList').unbind('click').click(function() {
-        $('.collapsed').addClass('expanded');
-        $('.collapsed').children().show('medium');
-    })
-    $('#collapseList').unbind('click').click(function() {
-        $('.collapsed').removeClass('expanded');
-        $('.collapsed').children().hide('medium');
-    })
-};
-
-
-
-$(document).ready(function() {
-    changeContent("arista_commands.yj.md.html");
-    prepareList();
-}); 
-</script>
-
-<div id=leftBar>
-<ul id="explist" >
-<li  onClick="init()" >init</li>
-"""
 HOME_PAGE_TRAILER = """
 </ul>
 <br></p>
@@ -294,24 +150,12 @@ def createHomePage():
    files.sort()
    print files
    htmlFile = HOST_DIR + 'pages/' + '/index.html'
+   with open("home_page_header.html") as f: 
+       HOME_PAGE_HEADER = "".join( f.readlines() )
    with open( htmlFile, 'w' ) as homePage:
        homePage.write(HOME_PAGE_HEADER)
        lines = createHtmlDivOfFiles(files)
        homePage.write(lines)
-       homePage.write(HOME_PAGE_TRAILER)
-
-def createHomePage2():
-   files = findMdFilesInternal( '' )[ 'mdFiles' ]
-   files.sort()
-   print files
-   htmlFile = HOST_DIR + 'pages/' + '/index.html'
-   with open( htmlFile, 'w' ) as homePage:
-       homePage.write(HOME_PAGE_HEADER)
-       for f in files:
-           name = f.replace('___', ' ' )
-           line = '<li  class="menuitem" id="' + f +  '.yj.md.html"' + \
-                     'onClick="changeContent(this)" >' + name + '</li>\n'
-           homePage.write(line)
        homePage.write(HOME_PAGE_TRAILER)
 
 
