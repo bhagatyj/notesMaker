@@ -17,16 +17,7 @@ IMG_DIR = BASE_DIR + 'Sites/images'
 MARKDOWN = BASE_DIR + 'Markdown.pl'
 
 HOME_PAGE_HEADER = ""
-
-HOME_PAGE_TRAILER = """
-</ul>
-<br></p>
-</div>
-<div id=content class='top'>
-<h3>Home Page</h3>
-</div>
-</body>
-"""
+HOME_PAGE_TRAILER = ""
 
 app = Flask(__name__, static_url_path='')
 
@@ -152,6 +143,8 @@ def createHomePage():
    htmlFile = HOST_DIR + 'pages/' + '/index.html'
    with open("home_page_header.html") as f: 
        HOME_PAGE_HEADER = "".join( f.readlines() )
+   with open("home_page_trailer.html") as f: 
+       HOME_PAGE_TRAILER = "".join( f.readlines() )
    with open( htmlFile, 'w' ) as homePage:
        homePage.write(HOME_PAGE_HEADER)
        lines = createHtmlDivOfFiles(files)
