@@ -9,7 +9,7 @@ from os import listdir
 from os.path import isfile, join, isdir
 
 # __file__ refers to the file settings.py 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/'  # refers to application_top
 HOST_DIR = os.getenv('HOME') + '/website/'
 BASE_DIR = os.getenv('HOME') + '/Dropbox/'
 CSS_DIR = BASE_DIR + 'Sites/bootstrap' 
@@ -141,9 +141,9 @@ def createHomePage():
    files.sort()
    print files
    htmlFile = HOST_DIR + 'pages/' + '/index.html'
-   with open("home_page_header.html") as f: 
+   with open(APP_ROOT + "home_page_header.html") as f: 
        HOME_PAGE_HEADER = "".join( f.readlines() )
-   with open("home_page_trailer.html") as f: 
+   with open(APP_ROOT + "home_page_trailer.html") as f: 
        HOME_PAGE_TRAILER = "".join( f.readlines() )
    with open( htmlFile, 'w' ) as homePage:
        homePage.write(HOME_PAGE_HEADER)
