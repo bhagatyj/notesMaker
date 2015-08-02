@@ -9,89 +9,15 @@ from os import listdir
 from os.path import isfile, join, isdir
 
 # __file__ refers to the file settings.py 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/'  # refers to application_top
 HOST_DIR = os.getenv('HOME') + '/website/'
 BASE_DIR = os.getenv('HOME') + '/Dropbox/'
 CSS_DIR = BASE_DIR + 'Sites/bootstrap' 
 IMG_DIR = BASE_DIR + 'Sites/images' 
 MARKDOWN = BASE_DIR + 'Markdown.pl'
 
-HOME_PAGE_HEADER = """
-<!doctype html>
- <title> BYJ </title >
-<head> 
-<link rel="stylesheet" type="text/css" href="/path/bootstrap/css/bootstrap.css"> 
-<style>
-.box {
-    margin: 0px;
-}
-#leftBar {
-    width: 18%;
-    display: inline-block;
-    vertical-align: top;
-}
-#content {
-    width: 80%;
-    display: inline-block;
-    vertical-align: top;
-}
-
-#navbar {
-  display: block;
-  list-style-type: none;
-}
- 
-.menuitem {
-    list-style-type:   none;
-    display:           inline-block;
-    width:             150px;
-    margin-left:       5px;
-    margin-right:      5px;
-    font-family:       Georgia;
-    font-size:         11px;
-    background-color:  #c0dbf1;
-    border:            1px solid black;
-    padding:           0;    
-}
-.menuitem:hover {
-    background-color:        #8bb3d4;
-}
-
-</style>
-</head>
-<body>
-<script src="/path/bootstrap/jquery/jquery.js"></script>
-<script>
-    function changeContent(file) { 
-        console.log(file);
-        $.get("http://127.0.0.1:5000/path/".concat(file).concat("?rnd=seconds_since_epoch"), function(response) {
-            $('#content').html(response);
-        });
-    } 
-    function init() { 
-        console.log("init");
-        $.get("http://127.0.0.1:5000/init", function(response) {
-            $('#content').html(response);
-        });
-    } 
-$(document).ready(function() {
-    //changeContent("arista_commands.yj.md.html");
-}); 
-</script>
-
-<div id=leftBar>
-<ul id="navbar" >
-<li  class="menuitem" onClick="init()" >init</li>
-"""
-HOME_PAGE_TRAILER = """
-</ul>
-<br></p>
-</div>
-<div id=content class='top'>
-<h3>Home Page</h3>
-</div>
-</body>
-"""
+HOME_PAGE_HEADER = ""
+HOME_PAGE_TRAILER = ""
 
 app = Flask(__name__, static_url_path='')
 
@@ -156,18 +82,73 @@ def findMdFilesInternal( dirname ):
     mySet["mdFiles"] = httpLinks
     return mySet
 
+def formRecursiveDict( names, separator='___' ):
+    dictRoot = dict()
+    for name in names:
+        newDict = dictRoot
+        nodes = name.split( separator )
+        for node in nodes[ : -1 ]:
+            if node not in newDict:
+                newDict[node] = dict()
+            newDict = newDict[node]
+        if '.files' not in newDict:
+            newDict['.files'] = list()
+        newDict['.files'].append(name)
+    return dictRoot
+
+def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
+             itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)' >%s</li>",
+             valuetag="  %s", blocktag=('<ul>', '</ul>')):
+    print inpData
+    if isinstance(inpData, dict):
+        if '.files' not in inpData:
+            htmlText.append(blocktag[0])
+        for k, v in inpData.iteritems():
+            name = nametag % k
+            if isinstance(v, dict) or isinstance(v, list):
+                if (k != '.files'):
+                    htmlText.append(itemtag % ( name, name) )
+                pretty_items(htmlText, v)
+            else:
+                value = valuetag % v
+                htmlText.append(itemtag % (name + value, name + value ))
+        if '.files' not in inpData:
+            htmlText.append(blocktag[1])
+    elif isinstance(inpData, list):
+        htmlText.append(blocktag[0])
+        for i in inpData:
+            if isinstance(i, dict) or isinstance(i, list):
+                htmlText.append(itemtag % (" - ", " - " ) )
+                pretty_items(htmlText, i)
+            else:
+                link = i.split('___')[-1]
+                htmlText.append(itemtag % ( i, link ) )
+        htmlText.append(blocktag[1])
+    return htmlText
+
+def formHtmlText( inpData ):
+    r = list()
+    pretty_items( r, inpData )
+    return '\n'.join(r)
+
+def createHtmlDivOfFiles( files ):
+    rDict = formRecursiveDict( files )
+    htmlDiv = formHtmlText( rDict )
+    return htmlDiv
+
 def createHomePage():
    files = findMdFilesInternal( '' )[ 'mdFiles' ]
    files.sort()
    print files
    htmlFile = HOST_DIR + 'pages/' + '/index.html'
+   with open(APP_ROOT + "home_page_header.html") as f: 
+       HOME_PAGE_HEADER = "".join( f.readlines() )
+   with open(APP_ROOT + "home_page_trailer.html") as f: 
+       HOME_PAGE_TRAILER = "".join( f.readlines() )
    with open( htmlFile, 'w' ) as homePage:
        homePage.write(HOME_PAGE_HEADER)
-       for f in files:
-           name = f.replace('___', ' ' )
-           line = '<li  class="menuitem" id="' + f +  '.yj.md.html"' + \
-                     'onClick="changeContent(this.id)" >' + name + '</li>\n'
-           homePage.write(line)
+       lines = createHtmlDivOfFiles(files)
+       homePage.write(lines)
        homePage.write(HOME_PAGE_TRAILER)
 
 
