@@ -165,43 +165,11 @@ def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>",
         htmlText.append(blocktag[1])
     return htmlText
 
-def pretty_items_old(htmlText, inpData, nametag="<strong>%s: </strong>", 
-             itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)'>%s</li>",
-             itemtagCollapse="<li  id='%s.yj.md.html' onclick='changeContent(this)' class='collapse'>%s</li>",
-             valuetag="  %s", blocktag=('<ul>', '</ul>')):
-    if isinstance(inpData, dict):
-        k = '.files'
-        if '.files' in inpData:
-            htmlText.append(blocktag[0])
-            v = inpData[k]
-            pretty_items(htmlText, v)
-            htmlText.append(blocktag[1])
-
-        htmlText.append(blocktag[0])
-        for k, v in inpData['dirs'].iteritems():
-            if (k == '.files'):
-                continue
-            name = nametag % k
-            if isinstance(v, dict):
-                htmlText.append(itemtag % ( name, name) )
-                pretty_items(htmlText, v)
-            else:
-                assert(0)
-        htmlText.append(blocktag[1])
-    elif isinstance(inpData, list):
-        for i in inpData:
-            if isinstance(i, dict) or isinstance(i, list):
-                htmlText.append(itemtag % (" - ", " - " ) )
-                pretty_items(htmlText, i)
-            else:
-                link = i.split('___')[-1]
-                #htmlText.append(itemtagCollapse % ( i, link ) )
-                htmlText.append(itemtag % ( i, link ) )
-    return htmlText
-
-# pretty_items is a tricky function. We need the list we pass to the function. But
-# the pretty_items function uses recursion and hence cannot return it directly.
-# So we hold a reference.
+"""
+pretty_items is a tricky function. We need the list we pass to the function. But
+the pretty_items function uses recursion and hence cannot return it directly.
+So we hold a reference.
+"""
 def formHtmlText( inpData ):
     reference = list()
     pretty_items( reference, inpData )
