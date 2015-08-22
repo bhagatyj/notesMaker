@@ -181,7 +181,11 @@ def createHtmlDivOfFiles( files ):
     rDict = formRecursiveDict( files )
     htmlDiv = formHtmlText( rDict )
     return htmlDiv
-
+"""
+CreateHomePage does all the work of finding all the MD files
+converting them. Forming a Node Hierarchy, converting that
+to a navigation section and creating the home page.
+"""
 def createHomePage():
    files = findMdFilesInternal( '' )[ 'mdFiles' ]
    files.sort()
@@ -240,7 +244,6 @@ def init():
 def initAndReturnIndex():
     init()
     return "Init Complete..."
-
 
 if __name__ == '__main__':
     cleanup()
