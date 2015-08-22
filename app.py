@@ -109,7 +109,11 @@ class Node:
         else:
             return None
 
-
+"""
+This function takes in the list of files and creates
+a hierarchical Node structure that represents how
+data is preent in the directory.
+"""
 def formRecursiveDict( names, separator='___' ):
     dictRoot = Node("root")
     for pathName in names:
@@ -130,6 +134,10 @@ def formRecursiveDict( names, separator='___' ):
                 subNode = subNode.dirs[nodeName]
     return dictRoot
     
+"""
+This function takes the hierarchical Node structure and forms html
+elements that are used to provide the navigation panel
+"""
 def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
              itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)'>%s</li>",
              itemtagCollapse="<li  id='%s.yj.md.html' onclick='changeContent(this)' class='collapse'>%s</li>",
