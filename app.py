@@ -82,6 +82,12 @@ def findMdFilesInternal( dirname ):
     mySet["mdFiles"] = httpLinks
     return mySet
 
+""" 
+Each Node represents a directory and could contain sub-directories and
+files. A node also has a complete pathname, class and other meta data
+associated with it. This meta data is useful for expanding/collapsing 
+the node in the html rendering.
+"""
 class Node:
     def __init__(self, path, parentPath=""):
         self.dirs = dict()
