@@ -113,6 +113,12 @@
         });
     } 
 
+    function getGithubCal() {
+        $.get("http://127.0.0.1:5000/gitcal", function(response) {
+            $('#content').html(response);
+            });
+    }
+
     function init() { 
         console.log("init");
         $.get("http://127.0.0.1:5000/init", function(response) {
@@ -148,10 +154,9 @@ function prepareList() {
     })
 };
 
-
-
 $(document).ready(function() {
     prepareList();
+    getGithubCal();
 }); 
 
 </script>

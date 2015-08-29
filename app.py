@@ -224,7 +224,7 @@ def static_proxy(path):
 @app.route('/gitcal')
 def getGitCal():
     data = requests.get(('https://github.com/users/bhagatyj/contributions'))
-    resp =  flask.render_template("map.html", svg=flask.Markup(data.content))
+    resp = flask.Response(data.content)
     resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
     resp.headers['Access-Control-Allow-Credentials'] = 'true'
     resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
