@@ -113,10 +113,6 @@
         });
     } 
 
-    function getGithubCal() {
-        $.get("https://github.com/users/bhagatyj/contributions"), function(response) {
-            $('#content').html(response);
-    }
     function init() { 
         console.log("init");
         $.get("http://127.0.0.1:5000/init", function(response) {
@@ -125,7 +121,6 @@
         $.ajaxSetup({
             cache: false // Disable caching of AJAX responses
         });
-        getGithubCal()
     } 
 
 function prepareList() {
@@ -156,8 +151,6 @@ function prepareList() {
 
 
 $(document).ready(function() {
-    //changeContent("arista_commands.yj.md.html");
-    getGithubCal()
     prepareList();
 }); 
 
