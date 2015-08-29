@@ -4,6 +4,7 @@ import flask
 import time
 import subprocess
 import os
+import requests
 import subprocess
 from os import listdir
 from os.path import isfile, join, isdir
@@ -127,7 +128,7 @@ def formRecursiveDict( names, separator='___' ):
         subNode = dictRoot
         for nodeName in pathList:
             if nodeName not in subNode.dirs:
-                print "added file:", nodeName
+                print "added file:", nodeName, "in" , subNode
                 #subNode.files.append(nodeName)
                 subNode.files.append(pathName)
             else:
@@ -142,21 +143,13 @@ def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>",
              itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)'>%s</li>",
              itemtagCollapse="<li  id='%s.yj.md.html' onclick='changeContent(this)' class='collapse'>%s</li>",
              valuetag="  %s", blocktag=('<ul>', '</ul>')):
-    if isinstance(inpData, list):
-        print inpData 
-        for i in inpData:
-            link = i.split('___')[-1]
-            #htmlText.append(itemtagCollapse % ( i, link ) )
-            htmlText.append(itemtag % ( i, link ) )
-    elif len(inpData.files) > 0:
+    if len(inpData.files) > 0:
         htmlText.append(blocktag[0])
-        #pretty_items(htmlText, inpData.files)
         for i in inpData.files:
             link = i.split('___')[-1]
-            #htmlText.append(itemtagCollapse % ( i, link ) )
             htmlText.append(itemtag % ( i, link ) )
         htmlText.append(blocktag[1])
-    elif len(inpData.dirs) > 0:
+    if len(inpData.dirs) > 0:
         htmlText.append(blocktag[0])
         for k, v in inpData.dirs.iteritems():
             name = nametag % k
@@ -223,6 +216,15 @@ def static_proxy(path):
         resp = flask.send_from_directory(HOST_DIR + 'pages/', path)
     else:
         resp = flask.send_from_directory(HOST_DIR, path)
+    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
+    resp.headers['Access-Control-Allow-Credentials'] = 'true'
+    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
+    return resp
+
+@app.route('/gitcal')
+def getGitCal():
+    data = requests.get(('https://github.com/users/bhagatyj/contributions'))
+    resp =  flask.render_template("map.html", svg=flask.Markup(data.content))
     resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
     resp.headers['Access-Control-Allow-Credentials'] = 'true'
     resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
