@@ -110,6 +110,9 @@ class Node:
         else:
             return None
 
+    def getMyClassTags(self):
+        return self.fullName
+
 """
 This function takes in the list of files and creates
 a hierarchical Node structure that represents how
@@ -140,20 +143,20 @@ This function takes the hierarchical Node structure and forms html
 elements that are used to provide the navigation panel
 """
 def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
-             itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)'>%s</li>",
+             itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)' class=%s >%s</li>",
              itemtagCollapse="<li  id='%s.yj.md.html' onclick='changeContent(this)' class='collapse'>%s</li>",
              valuetag="  %s", blocktag=('<ul>', '</ul>')):
     if len(inpData.files) > 0:
         htmlText.append(blocktag[0])
         for i in inpData.files:
             link = i.split('___')[-1]
-            htmlText.append(itemtag % ( i, link ) )
+            htmlText.append(itemtag % ( i, inpData.getMyClassTags(), link ) )
         htmlText.append(blocktag[1])
     if len(inpData.dirs) > 0:
         htmlText.append(blocktag[0])
         for k, v in inpData.dirs.iteritems():
             name = nametag % k
-            htmlText.append(itemtag % ( name, name) )
+            htmlText.append(itemtag % ( k, inpData.getMyClassTags(), name) )
             pretty_items(htmlText, v)
         htmlText.append(blocktag[1])
     return htmlText
@@ -192,42 +195,45 @@ def createHomePage():
        lines = createHtmlDivOfFiles(files)
        homePage.write(lines)
        homePage.write(HOME_PAGE_TRAILER)
+"""
+Decorator used for adding standard set of headers to the responses.
+"""
+def allowAccessControl(f):
+    def wrap(*args, **kwargs):
+        resp = f(*args, **kwargs)
+        resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
+        resp.headers['Access-Control-Allow-Credentials'] = 'true'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
+        return resp
 
+    return wrap
 
+@allowAccessControl
 @app.route('/findMdFiles/<dirname>')
 def findMdFiles( dirname ):
     resp = flask.jsonify( findMdFilesInternal )
-    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
-    resp.headers['Access-Control-Allow-Credentials'] = 'true'
-    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
     return resp
 
+@allowAccessControl
 @app.route('/getMdFile/<dirname>')
 def getMdFile(dirname):
     resp = app.send_static_file("/Users/byj/Dropbox/dailyLog.yj.html")
-    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
-    resp.headers['Access-Control-Allow-Credentials'] = 'true'
-    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
     return resp
 
+@allowAccessControl
 @app.route('/path/<path:path>')
 def static_proxy(path):
     if path.endswith(".html"):
         resp = flask.send_from_directory(HOST_DIR + 'pages/', path)
     else:
         resp = flask.send_from_directory(HOST_DIR, path)
-    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
-    resp.headers['Access-Control-Allow-Credentials'] = 'true'
-    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
     return resp
 
+@allowAccessControl
 @app.route('/gitcal')
 def getGitCal():
     data = requests.get(('https://github.com/users/bhagatyj/contributions'))
     resp = flask.Response(data.content)
-    resp.headers['Access-Control-Allow-Origin'] = flask.request.headers.get('Origin','*')
-    resp.headers['Access-Control-Allow-Credentials'] = 'true'
-    resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
     return resp
 
 def cleanup():
