@@ -108,7 +108,7 @@
         //console.log(object.id);
         $('.highlight').removeClass('highlight');
         $(object).addClass('highlight');
-        $.get("http://127.0.0.1:5000/path/".concat(object.id).concat("?rnd=seconds_since_epoch"), function(response) {
+        $.get("http://127.0.0.1:5000/path/".concat(object.id).concat(".yj.md.html").concat("?rnd=seconds_since_epoch"), function(response) {
             $('#content').html(response);
         });
     } 

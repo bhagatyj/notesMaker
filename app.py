@@ -116,7 +116,7 @@ class Node:
 """
 This function takes in the list of files and creates
 a hierarchical Node structure that represents how
-data is preent in the directory.
+data is present in the directory.
 """
 def formRecursiveDict( names, separator='___' ):
     dictRoot = Node("root")
@@ -131,7 +131,6 @@ def formRecursiveDict( names, separator='___' ):
         subNode = dictRoot
         for nodeName in pathList:
             if nodeName not in subNode.dirs:
-                print "added file:", nodeName, "in" , subNode
                 #subNode.files.append(nodeName)
                 subNode.files.append(pathName)
             else:
@@ -143,20 +142,26 @@ This function takes the hierarchical Node structure and forms html
 elements that are used to provide the navigation panel
 """
 def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
-             itemtag="<li  id='%s.yj.md.html' onclick='changeContent(this)' class=%s >%s</li>",
-             itemtagCollapse="<li  id='%s.yj.md.html' onclick='changeContent(this)' class='collapse'>%s</li>",
+             itemtag="<li  id='%s' onclick='%s' class=%s >%s</li>",
+             itemtagCollapse="<li  id='%s' onclick='%s' class='%s collapse'>%s</li>",
              valuetag="  %s", blocktag=('<ul>', '</ul>')):
     if len(inpData.files) > 0:
         htmlText.append(blocktag[0])
         for i in inpData.files:
             link = i.split('___')[-1]
-            htmlText.append(itemtag % ( i, inpData.getMyClassTags(), link ) )
+            htmlText.append(itemtag % ( i, \
+                        "changeContent(this)", \
+                        inpData.getMyClassTags(), \
+                        link ) )
         htmlText.append(blocktag[1])
     if len(inpData.dirs) > 0:
         htmlText.append(blocktag[0])
         for k, v in inpData.dirs.iteritems():
             name = nametag % k
-            htmlText.append(itemtag % ( k, inpData.getMyClassTags(), name) )
+            htmlText.append(itemtag % ( k, \
+                        "collapse(this)", \
+                        inpData.getMyClassTags(), \
+                        name) )
             pretty_items(htmlText, v)
         htmlText.append(blocktag[1])
     return htmlText
@@ -169,11 +174,9 @@ So we hold a reference.
 def formHtmlText( inpData ):
     reference = list()
     pretty_items( reference, inpData )
-    print reference
     return '\n'.join(reference)
 
 def createHtmlDivOfFiles( files ):
-    print files
     rDict = formRecursiveDict( files )
     htmlDiv = formHtmlText( rDict )
     return htmlDiv
