@@ -31,6 +31,7 @@
   margin-top:15px;
 }
  
+ /*
 #expList ul, li {
     list-style: none;
     margin:0;
@@ -51,7 +52,7 @@
     padding-left: 20px;
     background-repeat: no-repeat;
 }
- 
+*/
 /* Collapsed state for list element */
 
 /*    background-image: url(../img/collapsed.png); */
@@ -146,35 +147,8 @@
         });
     } 
 
-function prepareList() {
-    $('#expList').find('li:has(ul)').unbind('click').click(function(event) {
-        if(this == event.target) {
-            $(this).toggleClass('expanded');
-            $(this).children('ul').toggle('medium');
-        }
-        return false;
-    }).addClass('collapsed').removeClass('expanded').children('ul').hide();
- 
-    //Hack to add links inside the cv
-    $('#expList a').unbind('click').click(function() {
-        window.open($(this).attr('href'));
-        return false;
-    });
-    //Create the button functionality
-    $('#expandList').unbind('click').click(function() {
-        $('.collapsed').addClass('expanded');
-        $('.collapsed').children().show('medium');
-    })
-    $('#collapseList').unbind('click').click(function() {
-        $('.collapsed').removeClass('expanded');
-        $('.collapsed').children().hide('medium');
-    })
-};
-
 $(document).ready(function() {
-    prepareList();
     getGithubCal();
-    //$(".___root___").setAttribute("collapseState", "hidden");
     $(".___root___").attr("collapseStateHidden", 1);
     $(".___root").collapse('show');
     console.log( $(".___root") );
