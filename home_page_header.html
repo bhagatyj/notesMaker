@@ -125,7 +125,6 @@
             console.log("Hide");
             $(".".concat(object.id).concat("___")).collapse('hide');
             object.setAttribute("collapseStateHidden", 1);
-            // Also set this for all descendants (not working) FIXME
             $(".".concat(object.id).concat("___")).attr('collapseStateHidden', 1);
             $(".".concat(object.id)).attr('collapseStateHidden', 1);
         }
