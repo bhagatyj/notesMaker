@@ -116,11 +116,19 @@ class Node:
     def getSubClasses(self):
         subClasses = ""
         names = self.fullName.split("/")[1:]
+        # Take the name, split it and add subclasses ending with ___.
+        # If name is a/b/c, the subclasses will be 
+        # ___a___ ___a___b___ ___a___b___c___
+        # These are used for collapsing
         for i in range(1, len(names) + 1):
             className = "___"
             for j in range(i):
                 className += names[j] + "___"
             subClasses += ( className + " " )
+        # Finally add the subclass
+        # ___a___b___c
+        # This one is used for expanding (showing)
+        subClasses += className.rstrip("___")
         print self.fullName, ":", subClasses
         return subClasses
 

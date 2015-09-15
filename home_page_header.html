@@ -163,7 +163,9 @@ function prepareList() {
 $(document).ready(function() {
     prepareList();
     getGithubCal();
-    $(".___root___").collapse('toggle');
+    //$(".___root___").setAttribute("collapseState", "hidden");
+    $(".___root").collapse('show');
+    console.log( $(".___root") );
 }); 
 
 </script>
