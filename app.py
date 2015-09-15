@@ -111,7 +111,21 @@ class Node:
             return None
 
     def getMyClassTags(self):
-        return self.fullName
+        return self.fullName.replace("/", "___") + ("___");
+
+    def getSubClasses(self):
+        subClasses = ""
+        names = self.fullName.split("/")[1:]
+        for i in range(1, len(names) + 1):
+            className = "___"
+            for j in range(i):
+                className += names[j] + "___"
+            subClasses += ( className + " " )
+        print self.fullName, ":", subClasses
+        return subClasses
+
+    def getMyAbsClassTag(self):
+        return self.fullName.replace("/", "___") + ("___");
 
 """
 This function takes in the list of files and creates
@@ -142,25 +156,25 @@ This function takes the hierarchical Node structure and forms html
 elements that are used to provide the navigation panel
 """
 def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
-             itemtag="<li  id='%s' onclick='%s' class=%s >%s</li>",
+             itemtag="<li  id='%s' onclick='%s' class='%s' >%s</li>",
              itemtagCollapse="<li  id='%s' onclick='%s' class='%s collapse'>%s</li>",
              valuetag="  %s", blocktag=('<ul>', '</ul>')):
     if len(inpData.files) > 0:
         htmlText.append(blocktag[0])
         for i in inpData.files:
             link = i.split('___')[-1]
-            htmlText.append(itemtag % ( i, \
+            htmlText.append(itemtagCollapse % ( i, \
                         "changeContent(this)", \
-                        inpData.getMyClassTags(), \
+                        inpData.getSubClasses(), \
                         link ) )
         htmlText.append(blocktag[1])
     if len(inpData.dirs) > 0:
         htmlText.append(blocktag[0])
         for k, v in inpData.dirs.iteritems():
             name = nametag % k
-            htmlText.append(itemtag % ( k, \
+            htmlText.append(itemtagCollapse % ( inpData.getMyAbsClassTag() + k, \
                         "collapse(this)", \
-                        inpData.getMyClassTags(), \
+                        inpData.getSubClasses(), \
                         name) )
             pretty_items(htmlText, v)
         htmlText.append(blocktag[1])

@@ -3,6 +3,8 @@
  <title> BYJ Home Page </title >
 <head> 
 <link rel="stylesheet" type="text/css" href="/path/bootstrap/css/bootstrap.css"> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 <style>
@@ -100,7 +102,6 @@
 </style>
 </head>
 <body>
-<script src="/path/bootstrap/jquery/jquery.js"></script>
 <script>
 
     function changeContent(object) { 
@@ -112,6 +113,11 @@
             $('#content').html(response);
         });
     } 
+
+    function collapse(object) {
+        console.log(object.id);
+        $(".".concat(object.id).concat("___")).collapse('toggle');
+    }
 
     function getGithubCal() {
         $.get("http://127.0.0.1:5000/gitcal", function(response) {
@@ -157,6 +163,7 @@ function prepareList() {
 $(document).ready(function() {
     prepareList();
     getGithubCal();
+    $(".___root___").collapse('toggle');
 }); 
 
 </script>
