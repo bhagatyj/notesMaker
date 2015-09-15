@@ -116,7 +116,15 @@
 
     function collapse(object) {
         console.log(object.id);
-        $(".".concat(object.id).concat("___")).collapse('toggle');
+        console.log(object.getAttribute("collapseStateHidden"));
+        if (object.getAttribute("collapseStateHidden") == 1) {
+            console.log("Show");
+            object.setAttribute("collapseStateHidden", 0);
+            $(".".concat(object.id)).collapse('show');
+        } else {
+            console.log("Hide");
+            $(".".concat(object.id).concat("___")).collapse('hide');
+        }
     }
 
     function getGithubCal() {
@@ -164,6 +172,7 @@ $(document).ready(function() {
     prepareList();
     getGithubCal();
     //$(".___root___").setAttribute("collapseState", "hidden");
+    $(".___root___").attr("collapseStateHidden", 1);
     $(".___root").collapse('show');
     console.log( $(".___root") );
 }); 
