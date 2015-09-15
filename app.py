@@ -163,7 +163,7 @@ def formRecursiveDict( names, separator='___' ):
 This function takes the hierarchical Node structure and forms html
 elements that are used to provide the navigation panel
 """
-def pretty_items(htmlText, inpData, nametag="<strong>%s: </strong>", 
+def pretty_items(htmlText, inpData, nametag="<strong>%s </strong>", 
              itemtag="<li  id='%s' onclick='%s' class='%s' >%s</li>",
              itemtagCollapse="<li  id='%s' onclick='%s' class='%s collapse'>%s</li>",
              valuetag="  %s", blocktag=('<ul>', '</ul>')):
