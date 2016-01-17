@@ -3,7 +3,7 @@ from flask import Flask
 import flask
 import time
 import subprocess
-import os
+import os, re
 import requests
 import subprocess
 from os import listdir
@@ -26,10 +26,30 @@ app = Flask(__name__, static_url_path='')
 def index():
     return flask.send_from_directory(HOST_DIR + 'pages/', 'index.html')
 
+def addTableOfContents( inFileName, outFileName ):
+    with open(outFileName, "w") as outFile:
+        outFile.write("____Table of Contents____\n\n")
+        with open(inFileName, "r") as inFile:
+            for line in inFile:
+                if ( re.search( "#", line) ):
+                    numHash = line.count("#")
+                    tocLine = ""
+                    for i in range(numHash):
+                        tocLine += "  "
+                    line.replace("#", "")
+                    tocLine += "- " + line.replace("#", "")
+                    outFile.write( tocLine )
+            outFile.write("\n\n\n")
+        with open(inFileName, "r") as inFile:
+            for line in inFile:
+                outFile.write(line)
+
 def translateMdFileToHtml( mdFile, outFileName ):
+    tocFileName = mdFile + ".toc"
+    addTableOfContents(mdFile, tocFileName)
     tmpFileName = outFileName + ".tmp"
     tmpFile = open(outFileName + ".tmp" , "w")
-    inFile = open( mdFile, 'r' )
+    inFile = open( tocFileName, 'r' )
         
     p = subprocess.Popen(MARKDOWN, 
               shell=True, stdout=tmpFile, stdin=inFile)
