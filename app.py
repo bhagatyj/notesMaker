@@ -31,7 +31,10 @@ def addTableOfContents( inFileName, outFileName ):
         outFile.write("____Table of Contents____\n\n")
         with open(inFileName, "r") as inFile:
             for line in inFile:
-                if ( re.search( "#", line) ):
+				# If the # char is present after 3 spaces, then
+				# it is part of the <pre><code> area.
+				# So allow only upto 3 spaces.
+                if ( re.search( "^[ ]{0,3}#", line) ):
                     numHash = line.count("#")
                     tocLine = ""
                     for i in range(numHash):
@@ -60,6 +63,7 @@ def translateMdFileToHtml( mdFile, outFileName ):
     lines = tmpFile.read()
     tmpFile.close()
     inFile.close()
+    os.remove(tocFileName)
 
     header = '<!doctype html>\n '
     header += '<title> BYJ </title >\n'
