@@ -9,6 +9,9 @@ import subprocess
 from os import listdir
 from os.path import isfile, join, isdir
 
+# Run as
+# ./Documents/byj/pers/github/notesMaker/ws/bin/python2.7 ./Documents/byj/pers/github/notesMaker/app.py
+
 # __file__ refers to the file settings.py 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/'  # refers to application_top
 HOST_DIR = os.getenv('HOME') + '/website/'
@@ -43,13 +46,17 @@ def addTableOfContents( inFileName, outFileName ):
                     tocLine += "- " + line.replace("#", "")
                     outFile.write( tocLine )
             outFile.write("\n\n\n")
+
+def addContents( inFileName, outFileName ):
+    #addTableOfContents( inFileName, outFileName )
+    with open(outFileName, "w") as outFile:
         with open(inFileName, "r") as inFile:
             for line in inFile:
                 outFile.write(line)
 
 def translateMdFileToHtml( mdFile, outFileName ):
     tocFileName = mdFile + ".toc"
-    addTableOfContents(mdFile, tocFileName)
+    addContents(mdFile, tocFileName)
     tmpFileName = outFileName + ".tmp"
     tmpFile = open(outFileName + ".tmp" , "w")
     inFile = open( tocFileName, 'r' )
